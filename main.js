@@ -1,39 +1,39 @@
 const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
 const gmail = google.gmail('v1');
+const dotenv = require('dotenv');
+dotenv.config();
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+const GMAIL_ID = process.env.GMAIL_ID;
 
-
-const GMAIL_ID = 'rehanganapathy1710@gmail.com';
-const CLIENT_ID = '184344738888-v7f7p3utg1q1ti992han8kfdi57om2ac.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
-const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-const REFRESH_TOKEN = '1//04aQBmcfdJXhXCgYIARAAGAQSNwF-L9Irku50B2VObm2cTGUNJ02-LYikp_mRVe72nGf0TewZJZFShz1X5T095UcYb73ftoLJK5k';
-
-const oAuth2Client = new google.auth.OAuth2(
+const oauthclient = new google.auth.OAuth2(
     CLIENT_ID,
     CLIENT_SECRET,
     REDIRECT_URI
 );
 
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+oauthclient.setCredentials({ refresh_token: REFRESH_TOKEN });
 //check for emails received
 async function emailCheck() {
     try {
-        const accessToken = await oAuth2Client.getAccessToken()
+        const accessToken = await oauthclient.getAccessToken()
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
                 type: 'OAuth2',
-                user: GMAIL_ID,
-                clientId: CLIENT_ID,
-                clientSecret: CLIENT_SECRET,
-                refreshToken: REFRESH_TOKEN,
-                accessToken: accessToken,
+                user: process.env.GMAIL_ID,
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                refreshToken: process.env.REFRESH_TOKEN,
+                accessToken: process.env.ACCESS_TOKEN,
             },
         });
         const gmail = google.gmail({
             version: 'v1',
-            auth: oAuth2Client
+            auth: oauthclient
         });
         const res = await gmail.users.messages.list({
             userId: 'me',
